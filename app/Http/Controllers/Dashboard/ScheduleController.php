@@ -16,6 +16,7 @@ use CachetHQ\Cachet\Bus\Commands\Schedule\CreateScheduleCommand;
 use CachetHQ\Cachet\Bus\Commands\Schedule\DeleteScheduleCommand;
 use CachetHQ\Cachet\Bus\Commands\Schedule\UpdateScheduleCommand;
 use CachetHQ\Cachet\Integrations\Contracts\System;
+use CachetHQ\Cachet\Models\Incident;
 use CachetHQ\Cachet\Models\IncidentTemplate;
 use CachetHQ\Cachet\Models\Schedule;
 use GrahamCampbell\Binput\Facades\Binput;
@@ -100,6 +101,27 @@ class ScheduleController extends Controller
                 Binput::get('components', []),
                 Binput::get('notify', false)
             ));
+
+            $data = [
+                'user_id'  => 1,
+                'name'     => Binput::get('name'),
+                'message'  => Binput::get('message', null, false, false),
+                'status'   => 4,
+                'notify'   => 0,
+                'visible'  => 1,
+                'stickied' => false,
+                'component_id' => 0
+            ];
+            
+            if (Binput::get('completed_at') == "") {
+              $data['occurred_at'] = Binput::get('scheduled_at') . ':00';
+            } else {
+              $data['occurred_at'] = Binput::get('completed_at') . ':00';
+            }
+
+            // Create a new incident
+            $incident = Incident::create($data);
+
         } catch (ValidationException $e) {
             return cachet_redirect('dashboard.schedule.create')
                 ->withInput(Binput::all())
