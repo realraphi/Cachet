@@ -152,8 +152,8 @@ class Schedule extends Model implements HasPresenter
      */
     public function scopeUncompleted(Builder $query)
     {
-        return $query->whereIn('status', [self::UPCOMING, self::IN_PROGRESS])->where(function (Builder $query) {
-            return $query->whereNull('completed_at');
+		return $query->where('scheduled_at', '>=', Carbon::now()->subDays(7))->whereIn('status', [self::UPCOMING, self::IN_PROGRESS])->where(function (Builder $query) {
+            //return $query->whereNull('completed_at');
         });
     }
 
