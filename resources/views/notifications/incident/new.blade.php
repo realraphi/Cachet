@@ -7,7 +7,7 @@
 {{ $actionText }}
 @endcomponent
 
-Thanks,<br>
+Mit freundlichen Grüßen,<br>
 {{ Config::get('setting.app_name') }}
 
 @include('notifications.partials.subscription')
