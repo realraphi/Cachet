@@ -65,9 +65,11 @@ return [
 
     // Subscriber
     'subscriber' => [
-        'subscribe' => 'Abonnieren Sie um die neuesten Updates zu erhalten.',
-        'button'    => 'Abonnieren',
-        'manage'    => [
+        'subscribe'           => 'Abonnieren Sie um die neuesten Updates zu erhalten.',
+		'unsubscribe'         => 'Abmelden',
+        'button'              => 'Abonnieren',
+		'manage_subscription' => 'Abonnements verwalten',
+        'manage'              => [
             'no_subscriptions' => 'Du hast im Augenblick alle Updates abonniert.',
             'my_subscriptions' => 'Du hast im Augenblick folgende Updates abonniert.',
         ],

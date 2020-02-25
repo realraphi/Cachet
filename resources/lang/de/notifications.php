@@ -45,7 +45,7 @@ return [
         ],
         'update' => [
             'mail' => [
-                'subject' => 'Vorfall aktualisiert',
+                'subject' => 'Eintrag aktualisiert',
                 'content' => ':name wurde aktualisiert',
                 'title'   => ':name wurde auf :new_status aktualisiert',
                 'action'  => 'Anzeigen',
@@ -62,13 +62,13 @@ return [
     'schedule' => [
         'new' => [
             'mail' => [
-                'subject' => 'Neuer Zeitplan erstellt',
+                'subject' => 'Neue geplante Wartung erstellt',
                 'content' => ':name wurde für :date geplant',
                 'title'   => 'Eine neue geplante Wartung wurde erstellt.',
                 'action'  => 'Anzeigen',
             ],
             'slack' => [
-                'title'   => 'Neuer Zeitplan erstellt!',
+                'title'   => 'Neue geplante Wartung erstellt!',
                 'content' => ':name wurde für :date geplant',
             ],
             'sms' => [
