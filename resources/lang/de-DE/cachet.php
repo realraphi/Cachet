@@ -90,7 +90,7 @@ return [
             'manage_at_link'      => 'Verwalte deine Abonnements unter :link',
         ],
         'email' => [
-            'manage_subscription' => 'We\'ve sent you an email, please click the link to manage your subscription',
+            'manage_subscription' => 'Wir haben Ihnen eine E-Mail gesendet, bitte folgen Sie dem Link, um Ihr Abonnement zu verwalten.',
             'subscribe'           => 'Aktualisierungen per E-Mail abonnieren.',
             'subscribed'          => 'Sie haben E-Mail-Benachrichtigungen abonniert, überprüfen Sie bitte Ihre E-Mail, um Ihr Abonnement zu bestätigen.',
             'updated-subscribe'   => 'You\'ve succesfully updated your subscriptions.',
