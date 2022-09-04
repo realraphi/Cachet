@@ -12,6 +12,7 @@
 namespace CachetHQ\Cachet\Http\Controllers\Dashboard;
 
 use AltThree\Validator\ValidationException;
+use CachetHQ\Cachet\Bus\Commands\Incident\CreateIncidentCommand;
 use CachetHQ\Cachet\Bus\Commands\Schedule\CreateScheduleCommand;
 use CachetHQ\Cachet\Bus\Commands\Schedule\DeleteScheduleCommand;
 use CachetHQ\Cachet\Bus\Commands\Schedule\UpdateScheduleCommand;
@@ -112,20 +113,32 @@ class ScheduleController extends Controller
                 'stickied' => false,
                 'component_id' => 0
             ];
-            
-            if (Binput::get('completed_at') == "") {
-              $data['occurred_at'] = Binput::get('scheduled_at') . ':00';
-            } else {
-              $data['occurred_at'] = Binput::get('completed_at') . ':00';
-            }
-
-            // Create a new incident
-            $incident = Incident::create($data);
-
         } catch (ValidationException $e) {
             return cachet_redirect('dashboard.schedule.create')
                 ->withInput(Binput::all())
                 ->withTitle(sprintf('%s %s', trans('dashboard.notifications.whoops'), trans('dashboard.schedule.edit.failure')))
+                ->withErrors($e->getMessageBag());
+        }
+
+        try {
+            $incident = execute(new CreateIncidentCommand(
+                Binput::get('name'),
+                4, // status
+                Binput::get('message', null, false, false),
+                1, // visible
+                0, // component_id
+                4, // component_status
+                0, // notify
+                0, // stickied
+                Binput::get('occurred_at',Binput::get('scheduled_at')),
+                null,
+                [],
+                ['seo' => Binput::get('seo', [])]
+            ));
+        } catch (ValidationException $e) {
+            return cachet_redirect('dashboard.incidents.create')
+                ->withInput(Binput::all())
+                ->withTitle(sprintf('%s %s', trans('dashboard.notifications.whoops'), trans('dashboard.incidents.add.failure')))
                 ->withErrors($e->getMessageBag());
         }
 
