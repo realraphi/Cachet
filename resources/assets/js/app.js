@@ -52,7 +52,8 @@ const Flatpickr = require('flatpickr');
             Flatpickr('.flatpickr');
 
             Flatpickr('.flatpickr-time', {
-                enableTime: true
+                enableTime: true,
+				time_24hr: true
             });
         },
         components: {
