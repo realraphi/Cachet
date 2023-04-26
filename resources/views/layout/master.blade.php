@@ -27,6 +27,9 @@
 
     <link href="{{ Request::fullUrl() }}" rel="canonical">
 
+    <!-- RSS -->
+    @include('feed::links')
+
     @if (isset($favicon))
     <link rel="icon" href="{{ asset("/img/{$favicon}.ico") }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ asset("/img/{$favicon}.png") }}" type="image/png">
@@ -87,6 +90,6 @@
     </div>
 
     @yield('bottom-content')
+    <script src="{{ asset(mix('dist/js/all.js')) }}"></script>
 </body>
-<script src="{{ asset(mix('dist/js/all.js')) }}"></script>
 </html>

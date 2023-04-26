@@ -11,7 +11,7 @@
 
 namespace CachetHQ\Cachet\Http\Controllers;
 
-use AltThree\Badger\Facades\Badger;
+use CachetHQ\Badger\Facades\Badger;
 use CachetHQ\Cachet\Http\Controllers\Api\AbstractApiController;
 use CachetHQ\Cachet\Models\Component;
 use CachetHQ\Cachet\Models\Incident;
@@ -98,11 +98,11 @@ class StatusPageController extends AbstractApiController
 
         $allIncidents = Incident::with('component', 'updates.incident')
             ->where('visible', '>=', (int) !Auth::check())->whereBetween('occurred_at', [
-            $endDate->format('Y-m-d').' 00:00:00',
-            $startDate->format('Y-m-d').' 23:59:59',
-        ])->orderBy('occurred_at', 'desc')->get()->groupBy(function (Incident $incident) {
-            return app(DateFactory::class)->make($incident->occurred_at)->toDateString();
-        });
+                $endDate->format('Y-m-d').' 00:00:00',
+                $startDate->format('Y-m-d').' 23:59:59',
+            ])->orderBy('occurred_at', 'desc')->get()->groupBy(function (Incident $incident) {
+                return app(DateFactory::class)->make($incident->occurred_at)->toDateString();
+            });
 
         if (!$onlyDisruptedDays) {
             $incidentDays = array_pad([], $appIncidentDays, null);

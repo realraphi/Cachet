@@ -7,9 +7,10 @@
 {{ $actionText }}
 @endcomponent
 
-Mit freundlichen Grüßen,<br>
+{{ trans('cachet.thanks') }}<br>
 {{ Config::get('setting.app_name') }}
 
+{!! Config::get('setting.mail_signature') !!}
 @include('notifications.partials.subscription')
 
 @endcomponent

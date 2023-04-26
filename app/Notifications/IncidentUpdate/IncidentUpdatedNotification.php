@@ -15,10 +15,11 @@ use CachetHQ\Cachet\Models\Incident;
 use CachetHQ\Cachet\Models\IncidentUpdate;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Messages\NexmoMessage;
+use Illuminate\Notifications\Messages\VonageMessage;
 use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
 use McCool\LaravelAutoPresenter\Facades\AutoPresenter;
+use Illuminate\Support\Facades\URL;
 
 /**
  * This is the incident updated notification class.
@@ -57,7 +58,7 @@ class IncidentUpdatedNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'nexmo', 'slack'];
+        return ['mail'];
     }
 
     /**
@@ -74,6 +75,8 @@ class IncidentUpdatedNotification extends Notification
             'time'    => $this->update->created_at_diff,
         ]);
 
+        $manageUrl = URL::signedRoute(cachet_route_generator('subscribe.manage'), ['code' => $notifiable->verify_code]);
+
         return (new MailMessage())
             ->subject(trans('notifications.incident.update.mail.subject'))
             ->markdown('notifications.incident.update', [
@@ -87,8 +90,8 @@ class IncidentUpdatedNotification extends Notification
                 'unsubscribeText'        => trans('cachet.subscriber.unsubscribe'),
                 'unsubscribeUrl'         => cachet_route('subscribe.unsubscribe', $notifiable->verify_code),
                 'manageSubscriptionText' => trans('cachet.subscriber.manage_subscription'),
-                'manageSubscriptionUrl'  => cachet_route('subscribe.manage', $notifiable->verify_code),
-        ]);
+                'manageSubscriptionUrl'  => $manageUrl,
+            ]);
     }
 
     /**
@@ -96,15 +99,15 @@ class IncidentUpdatedNotification extends Notification
      *
      * @param mixed $notifiable
      *
-     * @return \Illuminate\Notifications\Messages\NexmoMessage
+     * @return \Illuminate\Notifications\Messages\VonageMessage
      */
-    public function toNexmo($notifiable)
+    public function toVonage($notifiable)
     {
         $content = trans('notifications.incident.update.sms.content', [
             'name' => $this->update->incident->name,
         ]);
 
-        return (new NexmoMessage())->content($content);
+        return (new VonageMessage())->content($content);
     }
 
     /**
@@ -134,16 +137,16 @@ class IncidentUpdatedNotification extends Notification
         return (new SlackMessage())
                     ->$status()
                     ->content($content)
-                    ->attachment(function ($attachment) use ($content, $notifiable) {
+                    ->attachment(function ($attachment) use ($notifiable) {
                         $attachment->title(trans('notifications.incident.update.slack.title', [
-                                        'name'       => $this->update->incident->name,
-                                        'new_status' => $this->update->human_status,
-                                    ]))
+                            'name'       => $this->update->incident->name,
+                            'new_status' => $this->update->human_status,
+                        ]))
                                    ->timestamp($this->update->getWrappedObject()->created_at)
                                    ->fields(array_filter([
-                                        'ID'   => "#{$this->update->id}",
-                                        'Link' => $this->update->permalink,
-                                    ]))
+                                       'ID'   => "#{$this->update->id}",
+                                       'Link' => $this->update->permalink,
+                                   ]))
                                    ->footer(trans('cachet.subscriber.unsubscribe', ['link' => cachet_route('subscribe.unsubscribe', $notifiable->verify_code)]));
                     });
     }

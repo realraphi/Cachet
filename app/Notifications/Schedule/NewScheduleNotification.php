@@ -12,13 +12,19 @@
 namespace CachetHQ\Cachet\Notifications\Schedule;
 
 use CachetHQ\Cachet\Models\Schedule;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Messages\NexmoMessage;
+use Illuminate\Notifications\Messages\VonageMessage;
 use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
 use McCool\LaravelAutoPresenter\Facades\AutoPresenter;
+use Illuminate\Support\Facades\URL;
+use Spatie\IcalendarGenerator\Components\Calendar;
+use Spatie\IcalendarGenerator\Components\Event;
+use Spatie\IcalendarGenerator\Properties\TextProperty;
+use Illuminate\Support\Facades\Config;
 
 /**
  * This is the new schedule notification class.
@@ -57,7 +63,7 @@ class NewScheduleNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail', 'nexmo', 'slack'];
+        return ['mail', 'vonage', 'slack'];
     }
 
     /**
@@ -74,6 +80,19 @@ class NewScheduleNotification extends Notification implements ShouldQueue
             'date' => $this->schedule->scheduled_at_formatted,
         ]);
 
+        $calendar = Calendar::create()
+            ->productIdentifier(Config::get('setting.app_name'))
+            ->event(function (Event $event) use ($notifiable, $content) {
+                $event->name($this->schedule->name)
+                    ->organizer(Config::get('mail.from.address'),Config::get('mail.from.name'))
+                    ->description($content)
+                    ->attendee($notifiable->email)
+                    ->startsAt(Carbon::parse($this->schedule->scheduled_at))
+                    ->endsAt(Carbon::parse($this->schedule->completed_at));
+            });
+
+        $manageUrl = URL::signedRoute(cachet_route_generator('subscribe.manage'), ['code' => $notifiable->verify_code]);
+
         return (new MailMessage())
             ->subject(trans('notifications.schedule.new.mail.subject'))
             ->markdown('notifications.schedule.new', [
@@ -81,8 +100,11 @@ class NewScheduleNotification extends Notification implements ShouldQueue
                 'unsubscribeText'        => trans('cachet.subscriber.unsubscribe'),
                 'unsubscribeUrl'         => cachet_route('subscribe.unsubscribe', $notifiable->verify_code),
                 'manageSubscriptionText' => trans('cachet.subscriber.manage_subscription'),
-                'manageSubscriptionUrl'  => cachet_route('subscribe.manage', $notifiable->verify_code),
-        ]);
+                'manageSubscriptionUrl'  => $manageUrl,
+            ])
+            ->attachData($calendar->get(), 'schedule.ics', [
+                'mime' => 'text/calendar; charset=UTF-8',
+            ]);
     }
 
     /**
@@ -90,16 +112,16 @@ class NewScheduleNotification extends Notification implements ShouldQueue
      *
      * @param mixed $notifiable
      *
-     * @return \Illuminate\Notifications\Messages\NexmoMessage
+     * @return \Illuminate\Notifications\Messages\VonageMessage
      */
-    public function toNexmo($notifiable)
+    public function toVonage($notifiable)
     {
         $content = trans('notifications.schedule.new.sms.content', [
             'name' => $this->schedule->name,
             'date' => $this->schedule->scheduled_at_formatted,
         ]);
 
-        return (new NexmoMessage())->content($content);
+        return (new VonageMessage())->content($content);
     }
 
     /**
@@ -122,9 +144,9 @@ class NewScheduleNotification extends Notification implements ShouldQueue
                         $attachment->title($content)
                                    ->timestamp($this->schedule->getWrappedObject()->scheduled_at)
                                    ->fields(array_filter([
-                                        'ID'     => "#{$this->schedule->id}",
-                                        'Status' => $this->schedule->human_status,
-                                    ]));
+                                       'ID'     => "#{$this->schedule->id}",
+                                       'Status' => $this->schedule->human_status,
+                                   ]));
                     });
     }
 }

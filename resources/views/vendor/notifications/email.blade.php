@@ -48,7 +48,7 @@
 
 {{-- Subcopy --}}
 @isset($actionText)
-@component('mail::subcopy')
+@slot('subcopy')
 @lang(
     "Falls der \":actionText\"-Button nicht funktionieren sollte, haben Sie auch die Möglichkeit, folgenden Link in Ihren Browser einzufügen:\n".
     '[:actionURL](:actionURL)',
@@ -57,6 +57,6 @@
         'actionURL' => $actionUrl,
     ]
 )
-@endcomponent
+@endslot
 @endisset
 @endcomponent

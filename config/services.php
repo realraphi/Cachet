@@ -23,7 +23,7 @@ return [
     |
     */
 
-   'github' => [
+    'github' => [
         'token' => env('GITHUB_TOKEN'),
     ],
 
@@ -37,9 +37,9 @@ return [
     ],
 
     'nexmo' => [
-        'key'      => env('NEXMO_KEY'),
-        'secret'   => env('NEXMO_SECRET'),
-        'sms_from' => env('NEXMO_SMS_FROM'),
+        'key'      => env('NEXMO_KEY',''),
+        'secret'   => env('NEXMO_SECRET',''),
+        'sms_from' => env('NEXMO_SMS_FROM',''),
     ],
 
     'ses' => [

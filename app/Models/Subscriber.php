@@ -29,9 +29,9 @@ use McCool\LaravelAutoPresenter\HasPresenter;
  */
 class Subscriber extends Model implements HasPresenter
 {
-    use HasMeta,
-        Notifiable,
-        ValidatingTrait;
+    use HasMeta;
+    use Notifiable;
+    use ValidatingTrait;
 
     /**
      * The attributes that should be casted to native types.
@@ -168,7 +168,7 @@ class Subscriber extends Model implements HasPresenter
      *
      * @return string
      */
-    public function routeNotificationForNexmo()
+    public function routeNotificationForVonage()
     {
         return $this->phone_number;
     }

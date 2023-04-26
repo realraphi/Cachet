@@ -28,9 +28,11 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Http\Request;
 
 /**
  * This is the subscribe controller.
@@ -66,7 +68,7 @@ class SubscribeController extends Controller
     public function showSubscribe()
     {
         return View::make('subscribe.subscribe')
-            ->withAboutApp(Markdown::convertToHtml(Config::get('setting.app_about')));
+            ->withAboutApp(Markdown::convertToHtml(Config::get('setting.app_about', '')));
     }
 
     /**
@@ -90,11 +92,18 @@ class SubscribeController extends Controller
         }
 
         // Send the subscriber a link to manage their subscription.
-        $subscription->notify(new ManageSubscriptionNotification());
+        if ($verified) {
+            // Send the subscriber a link to manage their subscription.
+            $subscription->notify(new ManageSubscriptionNotification());
+        }
 
         return redirect()->back()->withSuccess(
-            sprintf('%s %s', trans('dashboard.notifications.awesome'),
-            trans('cachet.subscriber.email.manage_subscription')));
+            sprintf(
+                '%s %s',
+                trans('dashboard.notifications.awesome'),
+                trans('cachet.subscriber.email.manage_subscription')
+            )
+        );
     }
 
     /**
@@ -104,10 +113,14 @@ class SubscribeController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function getVerify($code = null)
+    public function getVerify(Request $request, $code = null)
     {
         if ($code === null) {
             throw new NotFoundHttpException();
+        }
+
+        if (! $request->hasValidSignature()) {
+            abort(401);
         }
 
         $subscriber = Subscriber::where('verify_code', '=', $code)->first();
@@ -120,7 +133,7 @@ class SubscribeController extends Controller
             execute(new VerifySubscriberCommand($subscriber));
         }
 
-        return cachet_redirect('subscribe.manage', $code)
+        return redirect()->to(URL::signedRoute(cachet_route_generator('subscribe.manage'), ['code' => $code]))
             ->withSuccess(sprintf('%s %s', trans('dashboard.notifications.awesome'), trans('cachet.subscriber.email.subscribed')));
     }
 
@@ -161,10 +174,14 @@ class SubscribeController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function showManage($code = null)
+    public function showManage(Request $request, $code = null)
     {
         if ($code === null) {
             throw new NotFoundHttpException();
+        }
+
+        if (! $request->hasValidSignature()) {
+            abort(401);
         }
 
         $includePrivate = $this->auth->check();
@@ -207,13 +224,13 @@ class SubscribeController extends Controller
         try {
             execute(new UpdateSubscriberSubscriptionCommand($subscriber, Binput::get('subscriptions')));
         } catch (ValidationException $e) {
-            return cachet_redirect('subscribe.manage', $subscriber->verify_code)
+            return redirect()->to(URL::signedRoute(cachet_route_generator('subscribe.manage'), ['code' => $subscriber->verify_code]))
                 ->withInput(Binput::all())
                 ->withTitle(sprintf('%s %s', trans('dashboard.notifications.whoops'), trans('cachet.subscriber.email.failure')))
                 ->withErrors($e->getMessageBag());
         }
 
-        return cachet_redirect('subscribe.manage', $subscriber->verify_code)
+        return redirect()->to(URL::signedRoute(cachet_route_generator('subscribe.manage'), ['code' => $subscriber->verify_code]))
             ->withSuccess(sprintf('%s %s', trans('dashboard.notifications.awesome'), trans('cachet.subscriber.email.updated-subscribe')));
     }
 }
