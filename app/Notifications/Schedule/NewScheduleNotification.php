@@ -80,30 +80,18 @@ class NewScheduleNotification extends Notification implements ShouldQueue
             'date' => $this->schedule->scheduled_at_formatted,
         ]);
 
-        $calendar = Calendar::create()
-            ->productIdentifier(Config::get('setting.app_name'))
-            ->event(function (Event $event) use ($notifiable, $content) {
-                $event->name($this->schedule->name)
-                    ->organizer(Config::get('mail.from.address'),Config::get('mail.from.name'))
-                    ->description($content)
-                    ->attendee($notifiable->email)
-                    ->startsAt(Carbon::parse($this->schedule->scheduled_at))
-                    ->endsAt(Carbon::parse($this->schedule->completed_at));
-            });
-
         $manageUrl = URL::signedRoute(cachet_route_generator('subscribe.manage'), ['code' => $notifiable->verify_code]);
 
         return (new MailMessage())
             ->subject(trans('notifications.schedule.new.mail.subject'))
             ->markdown('notifications.schedule.new', [
                 'content'                => $content,
+                'actionText'             => trans('notifications.schedule.new.mail.action'),
+                'actionUrl'              => cachet_route('schedule', [$this->schedule]),
                 'unsubscribeText'        => trans('cachet.subscriber.unsubscribe'),
                 'unsubscribeUrl'         => cachet_route('subscribe.unsubscribe', $notifiable->verify_code),
                 'manageSubscriptionText' => trans('cachet.subscriber.manage_subscription'),
                 'manageSubscriptionUrl'  => $manageUrl,
-            ])
-            ->attachData($calendar->get(), 'schedule.ics', [
-                'mime' => 'text/calendar; charset=UTF-8',
             ]);
     }
 
