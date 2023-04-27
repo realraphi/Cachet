@@ -52,6 +52,7 @@ import Flatpickr from 'flatpickr'
             Flatpickr('.flatpickr');
 
             Flatpickr('.flatpickr-time', {
+                time_24hr: true,
                 enableTime: true
             });
         },
