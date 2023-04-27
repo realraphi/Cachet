@@ -32,6 +32,8 @@ return [
         'next_week'     => 'Nächste Woche',
         'scheduled'     => 'Geplante Wartungen',
         'scheduled_at'  => ', geplant :timestamp',
+        'posted'        => 'Veröffentlicht :timestamp',
+        'posted_at'     => 'Veröffentlicht am :timestamp',
         'status'        => [
             0 => 'Geplant', // TODO: Hopefully remove this.
             1 => 'Untersuchungen laufen',
@@ -143,5 +145,6 @@ return [
     'rss-feed'        => 'RSS',
     'atom-feed'       => 'Atom',
     'feed'            => 'Status-Feed',
+	'thanks'          => 'Mit freundlichen Grüßen,',
 
 ];

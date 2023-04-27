@@ -20,7 +20,7 @@ return [
         'incidents'                => 'Ereignisse',
         'logged'                   => '{0}Es gibt keine Ereignisse, gute Arbeit.|[1]Du hast ein Ereignis gemeldet.|[2,*]Du hast <strong>:count</strong> Ereignisse gemeldet.',
         'incident-create-template' => 'Vorlage erstellen',
-        'incident-templates'       => 'Ereignis Vorlagen',
+        'incident-templates'       => 'Ereignis-Vorlagen',
         'updates'                  => [
             'title'   => 'Vorfall Updates für :incident',
             'count'   => '{0}Keine Updates|[1]Ein Update|[2]Zwei Updates|[3,*]Mehrere Updates',
@@ -35,7 +35,7 @@ return [
                 'failure' => 'Etwas ist mit dem Aktualisieren des Vorfall Updates schief gelaufen',
             ],
         ],
-        'reported_by'              => 'Reported :timestamp by :user',
+        'reported_by'              => 'Reported :timestamp',
         'add'                      => [
             'title'   => 'Ereignis hinzufügen',
             'success' => 'Ereignis hinzugefügt.',
@@ -182,7 +182,7 @@ return [
         'team'        => 'Team',
         'member'      => 'Mitglied',
         'profile'     => 'Profil',
-        'description' => 'Teammitglieder werden die M&ouml;glichkeit haben, Komponente sowie Vorf&auml;lle hinzuzuf&uuml;gen und zu ver&auml;ndern.',
+        'description' => 'Teammitglieder werden die Möglichkeit haben, Komponenten sowie Vorfälle hinzuzufügen und zu verändern.',
         'add'         => [
             'title'   => 'Neues Teammitglied hinzufügen',
             'success' => 'Teammitglied hinzugefügt.',
@@ -233,6 +233,7 @@ return [
                 'subject' => 'Test-Benachrichtigung von Cachet',
                 'body'    => 'Dies ist ein Test-Benachrichtigung von Cachet.',
             ],
+            'signature'  => 'E-Mail-Signatur',
         ],
         'security' => [
             'security'   => 'Sicherheit',

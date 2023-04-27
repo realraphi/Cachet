@@ -19,7 +19,7 @@ return [
         'incidents'                => 'Vorfälle',
         'logged'                   => '{0} Es gibt keine Vorfälle, gute Arbeit.|Du hast einen Vorfall gemeldet.|Du hast <strong>:count</strong> Vorfälle gemeldet.',
         'incident-create-template' => 'Vorlage erstellen',
-        'incident-templates'       => 'Vorfall Vorlagen',
+        'incident-templates'       => 'Vorfall-Vorlagen',
         'add'                      => [
             'title'   => 'Vorfall hinzufügen',
             'success' => 'Vorfall hinzugefügt.',
@@ -164,7 +164,7 @@ return [
         'team'        => 'Team',
         'member'      => 'Mitglied',
         'profile'     => 'Profil',
-        'description' => 'Teammitglieder werden die Möglichkeit haben, Komponente sowie Vorfälle hinzuzufügen und zu verändern.',
+        'description' => 'Teammitglieder werden die Möglichkeit haben, Komponenten sowie Vorfälle hinzuzufügen und zu verändern.',
         'add'         => [
             'title'   => 'Neues Teammitglied hinzufügen',
             'success' => 'Teammitglied hinzugefügt.',
